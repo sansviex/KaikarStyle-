@@ -21,66 +21,9 @@ import java.util.logging.Logger;
  */
 public class UsuarioPaginaDao implements UsuarioPaginaServices {
 
-    private final String SQL_CONSULTA = "SELECT * FROM usuariopagina";
     private final String SQL_INSERTAR = "INSERT INTO usuariopagina(id,nombre,apellido,correo,clave) VALUES(?, ?, ?, ?, ?)";
-    private final String SQL_ELIMINAR = "DELETE FROM usuariopagina WHERE id = ?";
-    private final String SQL_ACTUALIZAR = "UPDATE usuariopagina SET nombre = ?, apellido = ?, correo = ? WHERE id = ?";
-    private final String SQL_CONSULTAID = "SELECT * FROM usuariopagina WHERE id = ?";
-
-    @Override
-    public List<UsuarioPagina> consultar() {
-        List<UsuarioPagina> usuarios = new ArrayList<>();
-        BaseDeDatos bd = null;
-        Connection connection = null;
-        PreparedStatement stm = null;
-        ResultSet resultado = null;
-        bd = BaseDeDatos.getInstance();
-        try {
-            connection = bd.getConnection();
-            stm = connection.prepareStatement(SQL_CONSULTA);
-            resultado = stm.executeQuery();
-            while (resultado.next()) {
-                String id = resultado.getString("id");
-                String nombre = resultado.getString("nombre");
-                String apellido = resultado.getString("apellido");
-                String correo = resultado.getString("correo");
-                String clave = resultado.getString("clave");
-                UsuarioPagina usuario = new UsuarioPagina(id, nombre, apellido, clave, correo);
-                usuarios.add(usuario);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(UsuarioPaginaDao.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return usuarios;
-
-    }
-
-    @Override
-    public UsuarioPagina consultarId(UsuarioPagina usuario) {
-        UsuarioPagina nUsuario = null;
-        BaseDeDatos bd = null;
-        Connection connection = null;
-        PreparedStatement stm = null;
-        ResultSet resultado = null;
-        bd = BaseDeDatos.getInstance();
-        try {
-            connection = bd.getConnection();
-            stm = connection.prepareStatement(SQL_CONSULTAID, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.TYPE_FORWARD_ONLY);
-            stm.setString(1, usuario.getId());
-            resultado = stm.executeQuery();
-            resultado.absolute(1);
-            String id = resultado.getString("id");
-            String nombre = resultado.getString("nombre");
-            String apellido = resultado.getString("apellido");
-            String correo = resultado.getString("correo");
-            String clave = resultado.getString("clave");
-            nUsuario = new UsuarioPagina(id, nombre, apellido, clave, correo);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(UsuarioPaginaDao.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return nUsuario;
-    }
+    private final String SQL_CONSULTARCORREO = "SELECT COUNT(*) FROM usuariopagina WHERE correo = ?";
+    private final String SQL_INICIAR_SESION = "SELECT * FROM usuariopagina WHERE correo = ? AND clave = ?";
 
     @Override
     public int crear(UsuarioPagina usuario) {
@@ -106,44 +49,40 @@ public class UsuarioPaginaDao implements UsuarioPaginaServices {
     }
 
     @Override
-    public int eliminar(UsuarioPagina usuario) {
-        int registro = 0;
-        BaseDeDatos bd = null;
-        Connection connection = null;
-        PreparedStatement stm = null;
-        bd = BaseDeDatos.getInstance();
-        try {
-            connection = bd.getConnection();
-            stm = connection.prepareStatement(SQL_ELIMINAR);
-            stm.setString(1, usuario.getId());
-            registro = stm.executeUpdate();
-
+    public UsuarioPagina iniciarSesion(String correo, String clave) {
+        UsuarioPagina usuario = null;
+        BaseDeDatos bd = BaseDeDatos.getInstance();
+        try (Connection connection = bd.getConnection(); PreparedStatement stm = connection.prepareStatement(SQL_INICIAR_SESION)) {
+            stm.setString(1, correo);
+            stm.setString(2, clave);
+            try (ResultSet resultado = stm.executeQuery()) {
+                if (resultado.next()) {
+                    String id = resultado.getString("id");
+                    String nombre = resultado.getString("nombre");
+                    String apellido = resultado.getString("apellido");
+                    usuario = new UsuarioPagina(id, nombre, apellido, clave, correo);
+                }
+            }
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioPaginaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return registro;
+        return usuario;
     }
 
     @Override
-    public int actualizar(UsuarioPagina usuario) {
-        int registro = 0;
-        BaseDeDatos bd = null;
-        Connection connection = null;
-        PreparedStatement stm = null;
-        bd = BaseDeDatos.getInstance();
-        try {
-            connection = bd.getConnection();
-            stm = connection.prepareStatement(SQL_ACTUALIZAR);
-            stm.setString(4, usuario.getId());
-            stm.setString(1, usuario.getNombre());
-            stm.setString(2, usuario.getApellido());
-            stm.setString(3, usuario.getCorreo());
-            registro = stm.executeUpdate();
-
+    public boolean registrar(UsuarioPagina usuario) {
+        boolean registrado = false;
+        BaseDeDatos bd = BaseDeDatos.getInstance();
+        try (Connection connection = bd.getConnection(); PreparedStatement stm = connection.prepareStatement(SQL_CONSULTARCORREO)) {
+            stm.setString(1, usuario.getCorreo());
+            try (ResultSet resultado = stm.executeQuery()) {
+                if (resultado.next() && resultado.getInt(1) == 0) {
+                    registrado = crear(usuario) > 0;
+                }
+            }
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioPaginaDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return registro;
+        return registrado;
     }
-
 }

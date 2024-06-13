@@ -16,23 +16,15 @@ public class UsuarioPaginaController {
 
     UsuarioPaginaDao ud = new UsuarioPaginaDao();
 
-    public List<UsuarioPagina> consultar() {
-        return ud.consultar();
-    }
-
-    public UsuarioPagina consultarId(UsuarioPagina usuarioPagina) {
-        return ud.consultarId(usuarioPagina);
-    }
-
     public int crear(UsuarioPagina usuarioPagina) {
         return ud.crear(usuarioPagina);
     }
 
-    public int borrar(UsuarioPagina usuarioPagina) {
-        return ud.eliminar(usuarioPagina);
+    public boolean registrar(UsuarioPagina usuarioPagina) {
+        return ud.registrar(usuarioPagina);
     }
 
-    public int actualizar(UsuarioPagina usuarioPagina) {
-        return ud.actualizar(usuarioPagina);
+    public UsuarioPagina iniciarSesion(String correo, String clave) {
+        return ud.iniciarSesion(correo, clave);
     }
 }

@@ -14,6 +14,8 @@ import java.util.List;
  * @author giova
  */
 public class UsuarioPaginaTest {
+    
+    /*
     public static void main(String[] args) {
         UsuarioPaginaDao usuario = new UsuarioPaginaDao();
         List<UsuarioPagina> usuarios = usuario.consultar();
@@ -25,4 +27,6 @@ public class UsuarioPaginaTest {
        
     }
     
+
+*/
 }
