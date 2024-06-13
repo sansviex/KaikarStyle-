@@ -51,7 +51,7 @@ public class AdministradorPagina {
     }
 
     // Métodos CRUD para Prenda
-    public boolean crearPrenda(List<Prenda> inventario, Prenda prenda) {
+    public boolean agregarPrenda(List<Prenda> inventario,Prenda prenda) {
         return inventario.add(prenda);
     }
 

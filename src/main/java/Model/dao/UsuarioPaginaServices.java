@@ -12,15 +12,7 @@ import java.util.List;
  * @author giova
  */
 public interface UsuarioPaginaServices {
-
-    public List<UsuarioPagina> consultar();
-
-    public UsuarioPagina consultarId(UsuarioPagina usuarioPagina);
-
-    public int crear(UsuarioPagina usuarioPagina);
-
-    public int eliminar(UsuarioPagina usuarioPagina);
-
-    public int actualizar(UsuarioPagina usuarioPagina);
-
+    public int crear(UsuarioPagina usuario);
+    public UsuarioPagina iniciarSesion(String correo, String clave);
+    public boolean registrar(UsuarioPagina usuario);
 }

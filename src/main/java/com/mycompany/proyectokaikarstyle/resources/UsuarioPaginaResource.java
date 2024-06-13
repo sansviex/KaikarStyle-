@@ -2,6 +2,8 @@ package com.mycompany.proyectokaikarstyle.resources;
 
 import Controller.UsuarioPaginaController;
 import Model.Entity.UsuarioPagina;
+import Model.dao.UsuarioPaginaServices;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -17,7 +19,7 @@ import java.util.List;
  *
  * @author
  */
-@Path("api")
+@Path("user")
 public class UsuarioPaginaResource {
 
     UsuarioPaginaController uc = new UsuarioPaginaController();
@@ -30,34 +32,8 @@ public class UsuarioPaginaResource {
                 .build();
     }
 
-    @GET
-    @Path("/usuarios")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getUsuarios() {
-        List<UsuarioPagina> usuarios = new ArrayList();
-        usuarios = uc.consultar();
-        System.out.println("mm" + usuarios);
-        return Response
-                .status(200)
-                .entity(usuarios)
-                .build();
-    }
-
-    @GET
-    @Path("/usuario/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getUsuarioId(@PathParam("id") String id) {
-        UsuarioPagina usuario = new UsuarioPagina(id);
-        UsuarioPagina usuarioR = uc.consultarId(usuario);
-        return Response
-                .status(200)
-                .entity(usuarioR)
-                .build();
-
-    }
-
     @POST
-    @Path("/usuarios")
+    @Path("/createUser")
     @Produces(MediaType.APPLICATION_JSON)
     public Response crear(UsuarioPagina usuario) {
         try {
@@ -74,42 +50,29 @@ public class UsuarioPaginaResource {
         }
     }
 
-    @DELETE
-    @Path("/usuarios/{id}")
+    @POST
+    @Path("/register")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response borrar(@PathParam("id") String id) {
-        UsuarioPagina usuario = new UsuarioPagina(id);
-        int i = uc.borrar(usuario);
-        if (i == 0) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity("no se encontró el destino")
-                    .build();
+    public Response registrarUsuario(UsuarioPagina usuarioPagina) {
+        if (uc.registrar(usuarioPagina)) {
+            return Response.status(Response.Status.CREATED).entity(usuarioPagina).build();
         } else {
-            return Response
-                    .ok("Correcto")
-                    .build();
+            return Response.status(Response.Status.CONFLICT).entity("Usuario ya existe").build();
         }
-
     }
 
-    @DELETE
-    @Path("/usuario")
+    @POST
+    @Path("/login")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editar(UsuarioPagina usuario) {
-        try {
-            uc.actualizar(usuario);
-            return Response
-                    .status(Response.Status.CREATED)
-                    .entity(usuario)
-                    .build();
-        } catch (Exception ex) {
-            return Response
-                    .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ex.getMessage())
-                    .build();
+    public Response iniciarSesion(UsuarioPagina usuarioPagina) {
+        usuarioPagina = uc.iniciarSesion(usuarioPagina.getCorreo(), usuarioPagina.getClave());
+        if (usuarioPagina != null) {
+            return Response.ok(usuarioPagina).build();
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Correo o clave incorrectos").build();
         }
-
     }
 
 }
