@@ -19,19 +19,18 @@ public interface AdministradorPaginaServices {
 
     public List<Prenda> consultarPrendas();
 
-    public Prenda consultarPrendaPorId(String id);
+    public Prenda consultarIdPrenda(Prenda prenda);
 
     public int agregarPrenda(Prenda prenda);
 
     public int actualizarPrenda(Prenda prenda);
-
-    public int eliminarPrenda(String id);
+   public int eliminarPrenda(Prenda prenda);
 
     public List<UsuarioPagina> consultarUsuarios();
 
-    public UsuarioPagina consultarUsuarioPorId(String id);
+    public UsuarioPagina consultarUsuarioPorId(UsuarioPagina usuarioPagina);
 
     public int actualizarUsuario(UsuarioPagina usuarioPagina);
 
-    public int eliminarUsuario(String id);
+    public int eliminarUsuario(UsuarioPagina usuarioPagina);
 }

@@ -145,4 +145,5 @@ public class UsuarioPaginaDao implements UsuarioPaginaServices {
         }
         return registro;
     }
+
 }
