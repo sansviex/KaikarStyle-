@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author giova
  */
-@Path("/administrador")
+@Path("administrador")
 public class AdministradorPaginaResource {
 
     AdministradorPaginaController ac = new AdministradorPaginaController();
@@ -107,7 +107,6 @@ public class AdministradorPaginaResource {
     @Path("/user/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsuarioId(@PathParam("id") String id) {
-        UsuarioPagina usuario = new UsuarioPagina(id);
         UsuarioPagina usuarioR = ac.consultarUsuarioPorId(id);
         return Response
                 .status(200)

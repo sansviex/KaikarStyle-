@@ -1,6 +1,7 @@
 Controller\UsuarioPaginaController.class
 Model\dao\AdministradorPaginaDao.class
 Model\Entity\Prenda.class
+com\mycompany\proyectokaikarstyle\resources\AdministradorPaginaResource.class
 com\mycompany\proyectokaikarstyle\JakartaRestConfiguration.class
 Model\dao\UsuarioPaginaServices.class
 Red\BaseDeDatos.class
